@@ -20,12 +20,10 @@ export const windowMgmtApp = new windowMgmt();
 export const ipcSetupItem = new ipcSetup(windowMgmtApp);
 
 app.on("ready", () => {
-  windowMgmtApp.createMainWindow();
+  // windowMgmtApp.createMainWindow();
   ipcSetupItem.setup();
   trayMgmtApp.setup();
-  // if (process.platform === "darwin") {
-  //   app.dock.hide();
-  // }
+  windowMgmtApp.createCommandWindow();
 });
 
 app.on("window-all-closed", () => {
@@ -39,7 +37,6 @@ app.on("activate", () => {
   // 実行中の時にウィンドウが1つも開いていない場合は、
   // 新しいウィンドウを作成します
   if (BrowserWindow.getAllWindows().length === 0) {
-    windowMgmtApp.createMainWindow();
+    windowMgmtApp.createCommandWindow();
   }
-  windowMgmtApp.createCommandWindow();
 });
