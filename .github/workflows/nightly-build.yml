@@ -46,7 +46,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: floatinfo-nightly-${{ matrix.os.name }}
+          name: floatinfo-vfd-nightly-${{ matrix.os.name }}
           path: |
             out/make/**/*.exe
             out/make/**/*.zip

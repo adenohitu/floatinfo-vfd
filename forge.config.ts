@@ -18,7 +18,7 @@ const config: ForgeConfig = {
       config: {
         repository: {
           owner: "adenohitu",
-          name: "floatinfo",
+          name: "floatinfo-vfd",
         },
         prerelease: true,
       },
