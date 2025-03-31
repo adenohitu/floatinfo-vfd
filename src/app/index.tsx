@@ -11,7 +11,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <Route path="/" element={<App />} />
       <Route
         path="/command"
-        element={<ActiveWindow title="Command Execution" />}
+        element={<ActiveWindow title="VFD Serial Tool" />}
       />
     </Routes>
   </HashRouter>

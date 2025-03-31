@@ -1,0 +1,35 @@
+.debugContainer {
+  width: 100%;
+  height: 100%;
+  padding: 16px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.tabDebugPanel {
+  margin-bottom: 16px;
+}
+
+.messagesContainer {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 10px;
+  font-family: "Courier New", monospace;
+}
+
+.messageItem {
+  margin-bottom: 4px;
+  display: flex;
+  flex-direction: column;
+}
+
+.messageContent {
+  margin: 0;
+  padding: 4px 8px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  font-size: 0.85rem;
+  font-family: "Consolas", "DejaVu Sans Mono", "Courier New", monospace;
+}

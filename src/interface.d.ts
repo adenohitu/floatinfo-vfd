@@ -52,6 +52,20 @@ export interface IElectronAPI {
   closeSerial: (tabId: string) => Promise<void>;
   getSerialSavedList: () => Promise<SerialTextData[]>;
   setSerialSavedList: (list: SerialTextData[]) => Promise<void>;
+
+  // Serial Debug methods
+  onSerialDebugMessage: (
+    callback: (
+      event: Electron.IpcRendererEvent,
+      tabId: string,
+      content: string
+    ) => void
+  ) => void;
+  onConnectedTabsUpdate: (
+    callback: (event: Electron.IpcRendererEvent, tabs: string[]) => void
+  ) => void;
+  removeSerialDebugListener: () => void;
+  removeConnectedTabsListener: () => void;
 }
 
 // PortInfo interface for serial port information

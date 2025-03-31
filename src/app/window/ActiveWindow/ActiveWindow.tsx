@@ -2,6 +2,7 @@ import React, { ReactNode } from "react";
 import styles from "./ActiveWindow.module.scss";
 import { useWindow } from "../../hooks/useWindow";
 import { Serial } from "../Serial/Serial";
+import { SerialDebug } from "../Serial/SerialDebug";
 
 interface ActiveWindowProps {
   title: string;
@@ -16,6 +17,8 @@ export function ActiveWindow({ title, children }: ActiveWindowProps) {
     switch (activeWindow) {
       case "serial":
         return <Serial />;
+      case "serialDebug":
+        return <SerialDebug />;
       default:
         return children;
     }
@@ -44,6 +47,15 @@ export function ActiveWindow({ title, children }: ActiveWindowProps) {
             title="Serial Management"
           >
             <span>P</span>
+          </button>
+          <button
+            className={`${styles.menuButton} ${
+              activeWindow === "serialDebug" ? styles.active : ""
+            }`}
+            onClick={() => setActiveWindow("serialDebug")}
+            title="Serial Debug"
+          >
+            <span>D</span>
           </button>
         </div>
       </div>

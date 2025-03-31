@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styles from "./Serial.module.scss";
 import {
   Box,
   Button,
-  Container,
   Divider,
   FormControlLabel,
   Grid,
@@ -29,304 +28,45 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
-import { v4 as uuidv4 } from "uuid";
-import { PortInfo } from "../../../interface.d";
-import { SerialTextData, SerialTextLine } from "../../../mgmt/serial";
-
-// タブ管理用の型定義
-interface SerialTab {
-  id: string;
-  name: string;
-  connectedPort: [string, number] | null;
-  baudRate: number;
-}
-
-// 空のテキスト行を作成する関数
-const createEmptyTextLine = (): SerialTextLine => ({
-  text: "",
-  speed: 0,
-  space: 0,
-  enabled: true,
-  maxLength: 20, // デフォルトは20文字
-});
-
-// 初期状態のテキストデータを作成する関数
-const createInitialTextData = (): SerialTextData => ({
-  stateName: "New State",
-  lines: [createEmptyTextLine()],
-  dayformat: "YYYY-MM-DD HH:mm:ss",
-});
+import { useSerialState, useSerialActions } from "../../hooks/useSerial";
 
 export function Serial() {
-  // タブ管理用のstate
-  const [tabs, setTabs] = useState<SerialTab[]>([
-    { id: "tab-1", name: "Serial 1", connectedPort: null, baudRate: 9600 },
-  ]);
-  const [activeTabIndex, setActiveTabIndex] = useState(0);
+  const {
+    tabs,
+    activeTabIndex,
+    activeTabId,
+    portList,
+    baudRate,
+    textData,
+    savedList,
+  } = useSerialState();
 
-  // シリアルポート関連のstate
-  const [portList, setPortList] = useState<PortInfo[]>([]);
-  const [baudRate, setBaudRate] = useState<number>(9600);
-
-  // テキストデータ関連のstate
-  const [textData, setTextData] = useState<SerialTextData>(
-    createInitialTextData()
-  );
-
-  // 保存済みデータ関連のstate
-  const [savedList, setSavedList] = useState<SerialTextData[]>([]);
-
-  // アクティブなタブのIDを取得
-  const activeTabId = tabs[activeTabIndex]?.id || "";
-
-  // コンポーネントのマウント時に保存済みデータを取得
-  useEffect(() => {
-    const loadSavedList = async () => {
-      const list = await window.electronAPI.getSerialSavedList();
-      setSavedList(list);
-    };
-    loadSavedList();
-  }, []);
-
-  // 保存済みデータが変更されたら永続化
-  useEffect(() => {
-    window.electronAPI.setSerialSavedList(savedList);
-  }, [savedList]);
-
-  // ポートリストを更新
-  const updatePortList = async () => {
-    const ports = await window.electronAPI.getSerialPorts();
-    setPortList(ports);
-  };
-
-  // タブ切り替え時の処理
-  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
-    setActiveTabIndex(newValue);
-  };
-
-  // 新しいタブの追加
-  const addTab = () => {
-    const newTabId = `tab-${uuidv4()}`;
-    setTabs([
-      ...tabs,
-      {
-        id: newTabId,
-        name: `Serial ${tabs.length + 1}`,
-        connectedPort: null,
-        baudRate: 9600,
-      },
-    ]);
-    setActiveTabIndex(tabs.length);
-  };
-
-  // タブの削除
-  const removeTab = async (index: number) => {
-    if (tabs.length <= 1) return;
-
-    // タブに接続されているシリアルポートを閉じる
-    const tabToRemove = tabs[index];
-    if (tabToRemove.connectedPort) {
-      await window.electronAPI.closeSerial(tabToRemove.id);
-    }
-
-    const newTabs = [...tabs];
-    newTabs.splice(index, 1);
-    setTabs(newTabs);
-
-    // アクティブなタブの調整
-    if (activeTabIndex >= index && activeTabIndex > 0) {
-      setActiveTabIndex(activeTabIndex - 1);
-    }
-  };
-
-  // シリアルポートに接続
-  const connectToPort = async (port: PortInfo) => {
-    const tab = tabs[activeTabIndex];
-
-    // 他のタブで使用中のポートかチェック
-    const isPortInUse = tabs.some(
-      (t) =>
-        t.id !== tab.id && t.connectedPort && t.connectedPort[0] === port.path
-    );
-
-    if (isPortInUse) {
-      alert(`Port ${port.path} is already in use by another tab.`);
-      return;
-    }
-
-    try {
-      const result = await window.electronAPI.connectSerial(
-        port.path,
-        baudRate,
-        tab.id
-      );
-
-      // タブの接続情報を更新
-      const newTabs = [...tabs];
-      newTabs[activeTabIndex] = { ...tab, connectedPort: result, baudRate };
-      setTabs(newTabs);
-    } catch (error) {
-      console.error("Failed to connect to serial port:", error);
-      alert(`Failed to connect to ${port.path}`);
-    }
-  };
-
-  // シリアルポートの切断
-  const disconnectPort = async () => {
-    const tab = tabs[activeTabIndex];
-    if (!tab.connectedPort) return;
-
-    try {
-      await window.electronAPI.closeSerial(tab.id);
-
-      // タブの接続情報をクリア
-      const newTabs = [...tabs];
-      newTabs[activeTabIndex] = { ...tab, connectedPort: null };
-      setTabs(newTabs);
-    } catch (error) {
-      console.error("Failed to disconnect serial port:", error);
-    }
-  };
-
-  // テキストデータの更新
-  const updateSerialText = async () => {
-    const tab = tabs[activeTabIndex];
-    if (!tab.connectedPort) return;
-
-    try {
-      await window.electronAPI.writeSerialText(tab.id, textData);
-    } catch (error) {
-      console.error("Failed to update serial text:", error);
-    }
-  };
-
-  // 現在のテキストデータを保存
-  const saveCurrentState = () => {
-    // 既存のステート名と重複しないかチェック
-    const exists = savedList.some(
-      (state) => state.stateName === textData.stateName
-    );
-    if (exists) {
-      const confirmed = window.confirm(
-        `A state with name "${textData.stateName}" already exists. Do you want to overwrite it?`
-      );
-
-      if (confirmed) {
-        // 既存の項目を更新
-        const newList = savedList.map((state) =>
-          state.stateName === textData.stateName ? textData : state
-        );
-        setSavedList(newList);
-      }
-    } else {
-      // 新しい項目として追加
-      setSavedList([...savedList, textData]);
-    }
-  };
-
-  // 保存済みのステートをロード
-  const loadSavedState = (state: SerialTextData) => {
-    setTextData({ ...state });
-  };
-
-  // 保存済みのステートを削除
-  const deleteSavedState = (index: number) => {
-    const newList = [...savedList];
-    newList.splice(index, 1);
-    setSavedList(newList);
-  };
-
-  // テキスト行を追加
-  const addTextLine = () => {
-    if (textData.lines.length >= 3) return; // 最大3行まで
-
-    setTextData({
-      ...textData,
-      lines: [...textData.lines, createEmptyTextLine()],
-    });
-  };
-
-  // テキスト行を削除
-  const removeTextLine = (index: number) => {
-    if (textData.lines.length <= 1) return; // 最低1行は必要
-
-    const newLines = [...textData.lines];
-    newLines.splice(index, 1);
-    setTextData({
-      ...textData,
-      lines: newLines,
-    });
-  };
-
-  // テキスト行の有効/無効を切り替え
-  const toggleLineEnabled = (index: number, enabled: boolean) => {
-    const newLines = [...textData.lines];
-    newLines[index] = { ...newLines[index], enabled };
-    setTextData({
-      ...textData,
-      lines: newLines,
-    });
-  };
-
-  // テキスト行の内容を更新
-  const updateLineText = (index: number, text: string) => {
-    const newLines = [...textData.lines];
-    newLines[index] = { ...newLines[index], text };
-    setTextData({
-      ...textData,
-      lines: newLines,
-    });
-  };
-
-  // テキスト行のスペースを更新
-  const updateLineSpace = (index: number, space: number) => {
-    const newLines = [...textData.lines];
-    newLines[index] = { ...newLines[index], space };
-    setTextData({
-      ...textData,
-      lines: newLines,
-    });
-  };
-
-  // テキスト行の速度を更新
-  const updateLineSpeed = (index: number, speed: number) => {
-    const newLines = [...textData.lines];
-    newLines[index] = { ...newLines[index], speed };
-    setTextData({
-      ...textData,
-      lines: newLines,
-    });
-  };
-
-  // テキスト行の最大文字数を更新
-  const updateLineMaxLength = (index: number, maxLength: number) => {
-    const newLines = [...textData.lines];
-    newLines[index] = { ...newLines[index], maxLength };
-    setTextData({
-      ...textData,
-      lines: newLines,
-    });
-  };
-
-  // 日付フォーマットを更新
-  const updateDateFormat = (format: string) => {
-    setTextData({
-      ...textData,
-      dayformat: format,
-    });
-  };
-
-  // 状態名を更新
-  const updateStateName = (name: string) => {
-    setTextData({
-      ...textData,
-      stateName: name,
-    });
-  };
+  const {
+    setBaudRate,
+    handleTabChange,
+    addTab,
+    removeTab,
+    updatePortList,
+    connectToPort,
+    disconnectPort,
+    updateSerialText,
+    saveCurrentState,
+    loadSavedState,
+    deleteSavedState,
+    addTextLine,
+    removeTextLine,
+    toggleLineEnabled,
+    updateLineText,
+    updateLineSpace,
+    updateLineSpeed,
+    updateLineMaxLength,
+    updateDateFormat,
+    updateStateName,
+  } = useSerialActions();
 
   return (
     <div className={styles.serialContainer}>
-      {/* タブバー */}
+      {/* Tab bar */}
       <div className={styles.tabs}>
         <Tabs
           value={activeTabIndex}
@@ -365,10 +105,10 @@ export function Serial() {
         </Button>
       </div>
 
-      {/* メインコンテンツ */}
+      {/* Main content */}
       <Box sx={{ flexGrow: 1, mt: 2 }}>
         <Grid container spacing={2}>
-          {/* 左パネル: 接続管理 */}
+          {/* Left panel: Connection management */}
           <Grid size={{ xs: 12, md: 6 }}>
             <Paper elevation={3} sx={{ mb: 2 }}>
               <Box p={2}>
@@ -421,7 +161,7 @@ export function Serial() {
                 >
                   <List dense>
                     {portList.map((port, index) => {
-                      // 他のタブで使用中のポートかチェック
+                      // Check if port is in use by another tab
                       const isInUse = tabs.some(
                         (t) =>
                           t.connectedPort && t.connectedPort[0] === port.path
@@ -510,7 +250,7 @@ export function Serial() {
             </Paper>
           </Grid>
 
-          {/* 右パネル: テキスト設定 */}
+          {/* Right panel: Text settings */}
           <Grid size={{ xs: 12, md: 6 }}>
             <Paper elevation={3}>
               <Box p={2}>

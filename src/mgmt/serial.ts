@@ -1,5 +1,6 @@
 import { SerialPort } from "serialport";
 import dayjs from "dayjs";
+import { BrowserWindow, ipcMain } from "electron";
 
 // UTF8 から SJIS への変換ユーティリティ
 export function convertUTF8toSJIS(text: string): Buffer {
@@ -76,6 +77,9 @@ export class SerialManager {
     // 定期更新タイマーを設定
     this.setupTimer(tabId);
 
+    // Send connected tabs update
+    this.sendConnectedTabsUpdate();
+
     return [path, baudRate];
   }
 
@@ -94,6 +98,19 @@ export class SerialManager {
       clearInterval(timer);
       this.timerMap.delete(tabId);
     }
+
+    // Send connected tabs update
+    this.sendConnectedTabsUpdate();
+  }
+
+  // Connected tabs list update
+  private sendConnectedTabsUpdate(): void {
+    const connectedTabs = Array.from(this.connections.keys());
+    BrowserWindow.getAllWindows().forEach((window) => {
+      if (!window.isDestroyed()) {
+        window.webContents.send("connected-tabs-update", connectedTabs);
+      }
+    });
   }
 
   // テキスト更新の設定
@@ -114,6 +131,15 @@ export class SerialManager {
     }, 10);
 
     this.timerMap.set(tabId, timer);
+  }
+
+  // Send debug message to renderer
+  private sendDebugMessage(tabId: string, content: string): void {
+    BrowserWindow.getAllWindows().forEach((window) => {
+      if (!window.isDestroyed()) {
+        window.webContents.send("serial-debug-message", tabId, content);
+      }
+    });
   }
 
   // ディスプレイ更新処理
@@ -167,9 +193,9 @@ export class SerialManager {
 
       // CR文字を送信してカーソルを行頭に戻す
       port.write(Buffer.from([0x0d]));
-      console.log(`${tabId}¥n`);
+      this.sendDebugMessage(tabId, `Tab: ${tabId}\n`);
 
-      console.log(renderData);
+      this.sendDebugMessage(tabId, renderData);
 
       // テキスト送信
       port.write(convertUTF8toSJIS(renderData));

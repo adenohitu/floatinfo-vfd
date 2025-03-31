@@ -1,7 +1,7 @@
 import { atom, useAtom } from "jotai";
 
 // ウィンドウのタイプを定義
-type WindowType = "command" | "schedule" | "setting" | "serial";
+type WindowType = "command" | "schedule" | "setting" | "serial" | "serialDebug";
 
 // 現在のアクティブウィンドウを保存するアトム
 const activeWindowAtom = atom<WindowType>("serial");

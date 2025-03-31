@@ -59,4 +59,20 @@ contextBridge.exposeInMainWorld("electronAPI", {
   getSerialSavedList: () => ipcRenderer.invoke("get-serial-saved-list"),
   setSerialSavedList: (list: SerialTextData[]) =>
     ipcRenderer.invoke("set-serial-saved-list", list),
+
+  // Serial Debug API
+  onSerialDebugMessage: (
+    callback: (
+      event: Electron.IpcRendererEvent,
+      tabId: string,
+      content: string
+    ) => void
+  ) => ipcRenderer.on("serial-debug-message", callback),
+  onConnectedTabsUpdate: (
+    callback: (event: Electron.IpcRendererEvent, tabs: string[]) => void
+  ) => ipcRenderer.on("connected-tabs-update", callback),
+  removeSerialDebugListener: () =>
+    ipcRenderer.removeAllListeners("serial-debug-message"),
+  removeConnectedTabsListener: () =>
+    ipcRenderer.removeAllListeners("connected-tabs-update"),
 });
