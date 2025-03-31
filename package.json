@@ -1,7 +1,7 @@
 {
   "name": "floatinfo-vfd",
   "productName": "floatinfo-vfd",
-  "version": "1.1.0",
+  "version": "0.1.2",
   "description": "My Electron application description",
   "main": ".vite/build/main.js",
   "scripts": {
