@@ -117,6 +117,29 @@ export class windowMgmt {
     this.createWindow("commandWindow", options, loadPath);
   }
 
+  public createSerialWindow() {
+    const options: BrowserWindowConstructorOptions = {
+      height: 600,
+      width: 800,
+      webPreferences: {
+        preload: path.join(__dirname, "preload.js"),
+      },
+      title: "Serial Management",
+      frame: false,
+      transparent: true,
+      titleBarStyle: "hidden",
+      trafficLightPosition: { x: 10, y: 10 },
+      titleBarOverlay: {
+        color: "#FFFFFF",
+        symbolColor: "#144782",
+      },
+    };
+
+    const loadPath = this.getLoadPath("serial");
+
+    this.createWindow("serialWindow", options, loadPath);
+  }
+
   public createWindow(
     key: windowKey,
     options: BrowserWindowConstructorOptions,

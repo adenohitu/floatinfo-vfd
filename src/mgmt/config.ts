@@ -1,4 +1,5 @@
 import Store from "electron-store";
+import { SerialTextData } from "./serial";
 
 interface ConfigSchema {
   ipCheckUrl: string;
@@ -8,8 +9,9 @@ interface ConfigSchema {
       y?: number;
       width?: number;
       height?: number;
-    }
+    };
   };
+  serialSavedList?: SerialTextData[];
 }
 
 export class configMgmt {
@@ -19,6 +21,7 @@ export class configMgmt {
     this.store = new Store<ConfigSchema>({
       defaults: {
         ipCheckUrl: "https://ownip-worker.flyanyfree.workers.dev",
+        serialSavedList: [],
       },
     });
   }
@@ -31,18 +34,25 @@ export class configMgmt {
     this.store.set("ipCheckUrl", url);
   }
 
-  getWindowBounds(windowId:string) {
+  getWindowBounds(windowId: string) {
     const windowBounds = this.store.get("windowBounds") || {};
     return windowBounds[windowId] || {};
   }
 
   setWindowBounds(
-    windowId:string,
-    bounds: { x: number; y: number; width: number; height: number },
-
+    windowId: string,
+    bounds: { x: number; y: number; width: number; height: number }
   ) {
     const windowBounds = this.store.get("windowBounds") || {};
     windowBounds[windowId] = bounds;
     this.store.set("windowBounds", windowBounds);
+  }
+
+  getSerialSavedList(): SerialTextData[] {
+    return this.store.get("serialSavedList") || [];
+  }
+
+  setSerialSavedList(list: SerialTextData[]): void {
+    this.store.set("serialSavedList", list);
   }
 }

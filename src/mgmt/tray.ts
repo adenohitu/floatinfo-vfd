@@ -1,46 +1,31 @@
 import { app, Menu, Tray } from "electron";
 import path from "path";
-import { ipcSetupItem, windowMgmtApp } from "../main";
+import { windowMgmtApp } from "../main";
+
 export class trayMgmt {
   tray: Tray | null = null;
+
   setup() {
     this.tray = new Tray(path.join(__dirname, "tray_icon_24.png"));
+
+    this.tray.on("click", () => {
+      windowMgmtApp.createCommandWindow();
+    });
+
     const contextMenu = Menu.buildFromTemplate([
       {
-        label: "update",
-        click: () => {
-          ipcSetupItem.updateEventSend();
-        },
-      },
-      {
-        label: "Command Execution",
+        label: "Open Command Window",
         click: () => {
           windowMgmtApp.createCommandWindow();
-         
         },
       },
       {
-        label: "Command Execution Devtool",
+        label: "Open Serial Window",
         click: () => {
-          windowMgmtApp.windowList["commandWindow"].webContents.openDevTools({
-            mode: "detach",
-          });
+          windowMgmtApp.createSerialWindow();
         },
       },
-      {
-        label: "Settings",
-        click: () => {
-          windowMgmtApp.createSettingsWindow();
-        },
-      },
-      {
-        label: "DevTools",
-        click: () => {
-          windowMgmtApp.windowList["mainWindow"].webContents.openDevTools({
-            mode: "detach",
-          });
-        },
-      },
+      { type: "separator" },
       {
         label: "Quit",
         click: () => {
@@ -48,6 +33,7 @@ export class trayMgmt {
         },
       },
     ]);
+
     this.tray.setToolTip("IP Checker");
     this.tray.setContextMenu(contextMenu);
   }

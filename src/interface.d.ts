@@ -4,6 +4,7 @@ interface CommandExecutionOptions {
 
 import { CommandResult } from "./mgmt/command";
 import { ScheduleConfig } from "./mgmt/schedule";
+import { SerialTextData } from "./mgmt/serial";
 
 export interface IElectronAPI {
   getgrovalIP: () => Promise<ipStatusApiResponse>;
@@ -39,6 +40,29 @@ export interface IElectronAPI {
     enabled: boolean
   ) => Promise<ScheduleConfig | null>;
   onScheduleEvent: (callback: (data: ScheduleConfig) => void) => void;
+
+  // Serial port methods
+  getSerialPorts: () => Promise<PortInfo[]>;
+  connectSerial: (
+    path: string,
+    baudRate: number,
+    tabId: string
+  ) => Promise<[string, number]>;
+  writeSerialText: (tabId: string, data: SerialTextData) => Promise<void>;
+  closeSerial: (tabId: string) => Promise<void>;
+  getSerialSavedList: () => Promise<SerialTextData[]>;
+  setSerialSavedList: (list: SerialTextData[]) => Promise<void>;
+}
+
+// PortInfo interface for serial port information
+export interface PortInfo {
+  path: string;
+  manufacturer: string | undefined;
+  serialNumber: string | undefined;
+  pnpId: string | undefined;
+  locationId: string | undefined;
+  productId: string | undefined;
+  vendorId: string | undefined;
 }
 
 declare global {

@@ -3,6 +3,8 @@
 import { contextBridge, ipcRenderer } from "electron";
 import { CommandResult } from "./mgmt/command";
 import { ScheduleConfig } from "./mgmt/schedule";
+import { SerialTextData } from "./mgmt/serial";
+import { PortInfo } from "./interface.d";
 
 interface CommandExecutionOptions {
   timeout?: number; // Timeout in milliseconds
@@ -46,4 +48,15 @@ contextBridge.exposeInMainWorld("electronAPI", {
     ipcRenderer.invoke("set-schedule-enabled", { id, enabled }),
   onScheduleEvent: (callback: (data: ScheduleConfig) => void) =>
     ipcRenderer.on("schedule-event", (_event, data) => callback(data)),
+
+  // Serial port API
+  getSerialPorts: () => ipcRenderer.invoke("get-serial-ports"),
+  connectSerial: (path: string, baudRate: number, tabId: string) =>
+    ipcRenderer.invoke("connect-serial", { path, baudRate, tabId }),
+  writeSerialText: (tabId: string, data: SerialTextData) =>
+    ipcRenderer.invoke("write-serial-text", { tabId, data }),
+  closeSerial: (tabId: string) => ipcRenderer.invoke("close-serial", tabId),
+  getSerialSavedList: () => ipcRenderer.invoke("get-serial-saved-list"),
+  setSerialSavedList: (list: SerialTextData[]) =>
+    ipcRenderer.invoke("set-serial-saved-list", list),
 });

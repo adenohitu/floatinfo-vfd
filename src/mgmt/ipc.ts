@@ -4,12 +4,14 @@ import { windowMgmt } from "./window";
 import { configMgmt } from "./config";
 import { commandMgmt, CommandExecutionOptions, CommandResult } from "./command";
 import { scheduleMgmt, ScheduleConfig } from "./schedule";
+import { SerialManager, SerialTextData } from "./serial";
 
 export class ipcSetup {
   windowMgmtApp: windowMgmt;
   configMgmt: configMgmt;
   commandMgmt: commandMgmt;
   scheduleMgmt: scheduleMgmt;
+  serialManager: SerialManager;
 
   constructor(winddowMgmtApp: windowMgmt) {
     this.windowMgmtApp = winddowMgmtApp;
@@ -18,6 +20,9 @@ export class ipcSetup {
 
     // Initialize the schedule manager with the command manager
     this.scheduleMgmt = new scheduleMgmt(this.commandMgmt);
+
+    // Initialize the serial manager
+    this.serialManager = new SerialManager();
 
     // Set up notification callback
     this.commandMgmt.setNotifyCallback(this.notifyCommandResult.bind(this));
@@ -129,6 +134,44 @@ export class ipcSetup {
         "show-command-by-runid",
         runId
       );
+    });
+
+    // Serial port handlers
+    ipcMain.handle("get-serial-ports", async () => {
+      return await this.serialManager.getSerialPorts();
+    });
+
+    ipcMain.handle(
+      "connect-serial",
+      async (
+        _,
+        {
+          path,
+          baudRate,
+          tabId,
+        }: { path: string; baudRate: number; tabId: string }
+      ) => {
+        return await this.serialManager.connectSerial(path, baudRate, tabId);
+      }
+    );
+
+    ipcMain.handle(
+      "write-serial-text",
+      (_, { tabId, data }: { tabId: string; data: SerialTextData }) => {
+        this.serialManager.writeSerialText(tabId, data);
+      }
+    );
+
+    ipcMain.handle("close-serial", async (_, tabId: string) => {
+      await this.serialManager.closeSerial(tabId);
+    });
+
+    ipcMain.handle("get-serial-saved-list", () => {
+      return this.configMgmt.getSerialSavedList();
+    });
+
+    ipcMain.handle("set-serial-saved-list", (_, list: SerialTextData[]) => {
+      this.configMgmt.setSerialSavedList(list);
     });
   }
 

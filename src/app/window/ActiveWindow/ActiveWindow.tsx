@@ -1,9 +1,7 @@
 import React, { ReactNode } from "react";
 import styles from "./ActiveWindow.module.scss";
 import { useWindow } from "../../hooks/useWindow";
-import { Command } from "../Command/Command";
-import { Schedule } from "../Schedule/Schedule";
-import { Setting } from "../Setting/Setting";
+import { Serial } from "../Serial/Serial";
 
 interface ActiveWindowProps {
   title: string;
@@ -16,12 +14,8 @@ export function ActiveWindow({ title, children }: ActiveWindowProps) {
   // 現在のアクティブウィンドウに基づいてコンテンツを選択
   const renderContent = () => {
     switch (activeWindow) {
-      case "command":
-        return <Command />;
-      case "schedule":
-        return <Schedule />;
-      case "setting":
-        return <Setting />;
+      case "serial":
+        return <Serial />;
       default:
         return children;
     }
@@ -44,30 +38,12 @@ export function ActiveWindow({ title, children }: ActiveWindowProps) {
         <div className={styles.menuButtons}>
           <button
             className={`${styles.menuButton} ${
-              activeWindow === "command" ? styles.active : ""
+              activeWindow === "serial" ? styles.active : ""
             }`}
-            onClick={() => setActiveWindow("command")}
-            title="Command Execution"
+            onClick={() => setActiveWindow("serial")}
+            title="Serial Management"
           >
-            <span>C</span>
-          </button>
-          <button
-            className={`${styles.menuButton} ${
-              activeWindow === "schedule" ? styles.active : ""
-            }`}
-            onClick={() => setActiveWindow("schedule")}
-            title="Schedule Management"
-          >
-            <span>S</span>
-          </button>
-          <button
-            className={`${styles.menuButton} ${
-              activeWindow === "setting" ? styles.active : ""
-            }`}
-            onClick={() => setActiveWindow("setting")}
-            title="Settings"
-          >
-            <span>⚙</span>
+            <span>P</span>
           </button>
         </div>
       </div>

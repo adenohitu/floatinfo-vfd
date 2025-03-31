@@ -1,10 +1,10 @@
 import { atom, useAtom } from "jotai";
 
 // ウィンドウのタイプを定義
-type WindowType = "command" | "schedule" | "setting";
+type WindowType = "command" | "schedule" | "setting" | "serial";
 
 // 現在のアクティブウィンドウを保存するアトム
-const activeWindowAtom = atom<WindowType>("command");
+const activeWindowAtom = atom<WindowType>("serial");
 
 export function useWindow() {
   const [activeWindow, setActiveWindow] = useAtom(activeWindowAtom);
