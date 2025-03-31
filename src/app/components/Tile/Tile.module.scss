@@ -1,0 +1,22 @@
+.tile {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 5px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.lineLimitone {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lineLimittwo {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}

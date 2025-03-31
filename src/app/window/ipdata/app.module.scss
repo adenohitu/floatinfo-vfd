@@ -1,0 +1,31 @@
+.windowParent {
+  height: 200px;
+  width: 200px;
+  background-color: rgba(0, 0, 0, 0);
+  overflow: hidden;
+}
+
+.ipinfo {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.2);
+  // text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 5px;
+  border-radius: 5px;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.lineLimitone {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lineLimittwo {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}

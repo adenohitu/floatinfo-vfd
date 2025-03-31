@@ -1,0 +1,12 @@
+html,
+body,
+#root {
+  overflow: hidden;
+  margin: 0;
+  background-color: transparent; /* 背景を透明に設定 */
+}
+
+/* グローバルスタイル設定 */
+* {
+  box-sizing: border-box;
+}

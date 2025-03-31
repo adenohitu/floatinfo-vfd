@@ -1,0 +1,448 @@
+// Common styles
+.formGroup {
+  margin-bottom: 10px;
+
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+
+  input {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+
+  input[type="checkbox"] {
+    width: auto;
+  }
+}
+
+.cronHelp {
+  display: block;
+  color: #666;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.error {
+  color: #d9534f;
+}
+
+.statusBadge {
+  font-size: 0.7em;
+  padding: 2px 6px;
+  border-radius: 10px;
+  background-color: #f0f0f0;
+  color: #555;
+
+  &.success {
+    background-color: #dff0d8;
+    color: #3c763d;
+  }
+
+  &.error {
+    background-color: #f2dede;
+    color: #a94442;
+  }
+
+  &.running {
+    background-color: #fcf8e3;
+    color: #8a6d3b;
+  }
+
+  &.abnormal {
+    background-color: #f5f5f5;
+    color: #777;
+  }
+
+  &.timeout {
+    background-color: #e8e8e8;
+    color: #555;
+  }
+
+  &.disabled {
+    background-color: #e8e8e8;
+    color: #777;
+  }
+}
+
+button {
+  padding: 8px 16px;
+  background-color: #0078d7;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+
+  &:hover {
+    background-color: #0063b1;
+  }
+}
+
+// Schedule component specific styles
+.scheduleContent {
+  flex: 1;
+  display: flex;
+  overflow: auto;
+  padding: 10px 20px 20px;
+  gap: 20px;
+  width: 100%;
+
+  // Responsive layout for smaller screens
+  @media (max-width: 1000px) {
+    flex-direction: column;
+  }
+}
+
+.scheduleAddSection {
+  flex: 0 0 25%;
+  padding-right: 20px;
+  border-right: 1px solid #e1e1e3;
+
+  // Responsive layout for smaller screens
+  @media (max-width: 1000px) {
+    flex: none;
+    width: 100%;
+    padding-right: 0;
+    padding-bottom: 20px;
+    border-right: none;
+    border-bottom: 1px solid #e1e1e3;
+  }
+}
+
+.scheduleListSection {
+  flex: 0 0 20%;
+  overflow-y: auto;
+
+  // Responsive layout for smaller screens
+  @media (max-width: 1000px) {
+    flex: none;
+    width: 100%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+}
+
+.scheduleDetailsSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding-left: 20px;
+
+  // Responsive layout for smaller screens
+  @media (max-width: 1000px) {
+    padding-left: 0;
+    padding-top: 20px;
+    border-top: 1px solid #e1e1e3;
+  }
+}
+
+.noSchedules,
+.noSelection,
+.noExecutions {
+  color: #777;
+  font-style: italic;
+  margin-top: 20px;
+}
+
+.scheduleList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: #f5f5f5;
+    }
+
+    &.selected {
+      background-color: #e6f2ff;
+      border-color: #b3d7ff;
+    }
+  }
+}
+
+.scheduleHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.scheduleName {
+  font-weight: bold;
+}
+
+.scheduleCommand {
+  display: block;
+  font-family: monospace;
+  margin: 5px 0;
+}
+
+.scheduleCron {
+  color: #666;
+  font-size: 0.8em;
+}
+
+.scheduleFooter {
+  text-align: right;
+  color: #666;
+  font-size: 0.8em;
+}
+
+.scheduleDetailHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  // Responsive layout for smaller screens
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+}
+
+.scheduleActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+
+  // Responsive layout for smaller screens
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+.executeButton {
+  background-color: #5cb85c;
+
+  &:hover {
+    background-color: #4cae4c;
+  }
+}
+
+.editButton {
+  background-color: #5bc0de;
+
+  &:hover {
+    background-color: #46b8da;
+  }
+}
+
+.deleteButton {
+  background-color: #d9534f;
+
+  &:hover {
+    background-color: #c9302c;
+  }
+}
+
+.enableButton {
+  background-color: #5cb85c;
+
+  &:hover {
+    background-color: #4cae4c;
+  }
+}
+
+.disableButton {
+  background-color: #f0ad4e;
+
+  &:hover {
+    background-color: #eea236;
+  }
+}
+
+.scheduleInfo {
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.scheduleInfoItem {
+  margin-bottom: 10px;
+}
+
+.scheduleInfoLabel {
+  font-weight: bold;
+  margin-right: 10px;
+  display: inline-block;
+  min-width: 80px;
+}
+
+.scheduleExecutions {
+  margin-top: 20px;
+}
+
+.executionsList {
+  list-style: none;
+  padding: 0;
+}
+
+.executionItem {
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.executionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.executionTime {
+  font-size: 0.9em;
+  color: #555;
+}
+
+.executionDetails {
+  display: flex;
+  gap: 20px;
+  font-size: 0.8em;
+  color: #666;
+}
+
+.executionDuration,
+.executionExitCode {
+  display: inline-block;
+}
+
+.editScheduleForm {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 4px;
+}
+
+.editButtons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+// Modal styles
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background-color: white;
+  border-radius: 6px;
+  max-width: 80%;
+  max-height: 80%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-width: 600px;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #e1e1e3;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #777;
+  cursor: pointer;
+
+  &:hover {
+    color: #333;
+  }
+}
+
+.modalContent {
+  padding: 15px;
+  overflow-y: auto;
+}
+
+.executionDetailItem {
+  display: flex;
+  margin-bottom: 10px;
+
+  .detailLabel {
+    min-width: 100px;
+    font-weight: bold;
+  }
+}
+
+.modalActions {
+  margin-top: 15px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.viewOutputButton {
+  background-color: #5bc0de;
+
+  &:hover {
+    background-color: #46b8da;
+  }
+}
+
+// Add new styles for output section
+.outputSection {
+  margin-top: 15px;
+  border-top: 1px solid #e1e1e3;
+  padding-top: 15px;
+
+  h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+}
+
+.outputDisplay {
+  background-color: #f8f8f8;
+  padding: 10px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 13px;
+  line-height: 1.4;
+  max-height: 300px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  color: #333;
+  margin: 0;
+  border: 1px solid #e1e1e3;
+}
